@@ -37,7 +37,7 @@
     "@amsterdam/arm-core": "^0.4.0"
   },
   "peerDependencies": {
-    "@amsterdam/asc-ui": "^0.25.0",
+    "@amsterdam/asc-ui": "^0.25.1",
     "@amsterdam/react-maps": "^0.10.0",
     "leaflet": "^1.6.0",
     "leaflet.markercluster": "^1.4.1",

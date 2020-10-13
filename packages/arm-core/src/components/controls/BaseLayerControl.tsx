@@ -16,13 +16,14 @@ import {
   AERIAL_AMSTERDAM_LAYERS,
   DEFAULT_AMSTERDAM_LAYERS,
   MapLayer,
-} from '../constants'
-import BaseLayer from './BaseLayer'
+} from '../../constants'
+import BaseLayer from '../BaseLayer'
+import Control from './Control'
 
-const AerialBackground = require('../../static/aerial-background.png')
-const AerialBackgroundRetina = require('../../static/aerial-background@2.png')
-const TopoBackground = require('../../static/topo-background.png')
-const TopoBackgroundRetina = require('../../static/topo-background@2.png')
+const AerialBackground = require('../../../static/aerial-background.png')
+const AerialBackgroundRetina = require('../../../static/aerial-background@2.png')
+const TopoBackground = require('../../../static/topo-background.png')
+const TopoBackgroundRetina = require('../../../static/topo-background@2.png')
 
 export enum BaseLayerType {
   Aerial = 'luchtfoto',
@@ -45,8 +46,6 @@ type ToggleButtonProps = {
 }
 
 const Wrapper = styled.div`
-  outline: 2px solid rgb(0, 0, 0, 0.1);
-  background-color: rgb(0, 0, 0, 0.1);
   padding: 0;
   display: flex;
 `
@@ -105,7 +104,7 @@ const StyledContextMenuItem = styled(ContextMenuItem)`
   }
 `
 
-type Props = {
+export interface BaseLayerControlProps {
   onChangeLayer?: (id: string, type: BaseLayerType) => void
   aerialLayers?: MapLayer[]
   topoLayers?: MapLayer[]
@@ -115,7 +114,7 @@ type Props = {
   options?: TileLayerOptions
 }
 
-const BaseLayerToggle: React.FC<Props> = ({
+const BaseLayerControl: React.FC<BaseLayerControlProps> = ({
   onChangeLayer,
   aerialLayers = AERIAL_AMSTERDAM_LAYERS,
   topoLayers = DEFAULT_AMSTERDAM_LAYERS,
@@ -185,71 +184,75 @@ const BaseLayerToggle: React.FC<Props> = ({
   }, [toggleBaseLayerType, selectedLayer])
 
   return (
-    <Wrapper>
-      <ToggleButton
-        variant="blank"
-        title="Wissel tussen luchtfoto's of een topografische kaarten"
-        onClick={handleToggle}
-        layerType={layerTypeForButton}
-      />
-      {baseLayers[toggleBaseLayerType].length > 1 && (
-        <Menu
-          data-test="context-menu"
-          title="Actiemenu"
-          arrowIcon={<Ellipsis />}
-          selectElementForTouchScreen={
-            <>
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-              <label
-                style={{ display: 'none' }}
-                htmlFor="arm-baselayer-toggle-select"
-              >
-                Open menu
-              </label>
-              <ContextMenuSelect
-                name="context-menu"
-                id="arm-baselayer-toggle-select"
-                onChange={(e) => handleChange(e, currentAmsterdamLayers)}
-              >
-                {baseLayers[toggleBaseLayerType].map(({ id, label }) => (
-                  <option key={id} value={id}>
-                    {label}
-                  </option>
-                ))}
-              </ContextMenuSelect>
-            </>
-          }
-          position="bottom"
-        >
-          {baseLayers[toggleBaseLayerType].map(({ id, label, urlTemplate }) => (
-            <StyledContextMenuItem
-              key={id}
-              onClick={(e) => {
-                setSelectedLayer({
-                  ...selectedLayer,
-                  [toggleBaseLayerType]: urlTemplate,
-                })
-                e.currentTarget.blur()
-              }}
-              icon={
-                urlTemplate === selectedLayer[toggleBaseLayerType] ? (
-                  <CheckmarkIcon inline size={12}>
-                    <Checkmark />
-                  </CheckmarkIcon>
-                ) : null
-              }
-            >
-              {label}
-            </StyledContextMenuItem>
-          ))}
-        </Menu>
-      )}
-      <BaseLayer
-        options={options}
-        baseLayer={selectedLayer[toggleBaseLayerType]}
-      />
-    </Wrapper>
+    <Control>
+      <Wrapper>
+        <ToggleButton
+          variant="blank"
+          title="Wissel tussen luchtfoto's of een topografische kaarten"
+          onClick={handleToggle}
+          layerType={layerTypeForButton}
+        />
+        {baseLayers[toggleBaseLayerType].length > 1 && (
+          <Menu
+            data-test="context-menu"
+            title="Actiemenu"
+            arrowIcon={<Ellipsis />}
+            selectElementForTouchScreen={
+              <>
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+                <label
+                  style={{ display: 'none' }}
+                  htmlFor="arm-baselayer-toggle-select"
+                >
+                  Open menu
+                </label>
+                <ContextMenuSelect
+                  name="context-menu"
+                  id="arm-baselayer-toggle-select"
+                  onChange={(e) => handleChange(e, currentAmsterdamLayers)}
+                >
+                  {baseLayers[toggleBaseLayerType].map(({ id, label }) => (
+                    <option key={id} value={id}>
+                      {label}
+                    </option>
+                  ))}
+                </ContextMenuSelect>
+              </>
+            }
+            position="bottom"
+          >
+            {baseLayers[toggleBaseLayerType].map(
+              ({ id, label, urlTemplate }) => (
+                <StyledContextMenuItem
+                  key={id}
+                  onClick={(e) => {
+                    setSelectedLayer({
+                      ...selectedLayer,
+                      [toggleBaseLayerType]: urlTemplate,
+                    })
+                    e.currentTarget.blur()
+                  }}
+                  icon={
+                    urlTemplate === selectedLayer[toggleBaseLayerType] ? (
+                      <CheckmarkIcon inline size={12}>
+                        <Checkmark />
+                      </CheckmarkIcon>
+                    ) : null
+                  }
+                >
+                  {label}
+                </StyledContextMenuItem>
+              ),
+            )}
+          </Menu>
+        )}
+        <BaseLayer
+          options={options}
+          baseLayer={selectedLayer[toggleBaseLayerType]}
+        />
+      </Wrapper>
+    </Control>
   )
 }
 
-export default BaseLayerToggle
+export default BaseLayerControl

@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { icons, useStateRef } from '@amsterdam/arm-core'
 import { ascDefaultTheme, themeColor } from '@amsterdam/asc-ui'
 import { useMapInstance } from '@amsterdam/react-maps'
@@ -41,7 +40,7 @@ L.Edit.PolyVerticesEdit = L.Edit.PolyVerticesEdit.extend({
   },
 })
 
-type Props = {
+export interface DrawToolProps {
   onDrawStart?: (layer: ExtendedLayer) => void
   onDrawEnd?: (layer: ExtendedLayer) => void
   onInitLayers?: (layers: ExtendedLayer[]) => void
@@ -52,7 +51,7 @@ type Props = {
   drawnItemsGroup?: L.FeatureGroup
 }
 
-const DrawTool: React.FC<Props> = ({
+const DrawTool: React.FC<DrawToolProps> = ({
   onToggle,
   onDelete,
   onDrawStart,
